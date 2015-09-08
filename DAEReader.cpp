@@ -75,7 +75,7 @@ namespace DAE_READER
 
 		long l0 = clock();
 
-		for (int i = 0; i < reader->geometry.size(); i++)
+		for (uint32_t i = 0; i < reader->geometry.size(); i++)
 		{
 			buildIndices(reader, i);
 		}
@@ -264,7 +264,7 @@ namespace DAE_READER
 		bool normalsPresent = false;
 		bool texcoordsPresent = false;
 
-		for (int i = 0; i < reader->geometry.size(); i++)
+		for (uint32_t i = 0; i < reader->geometry.size(); i++)
 		{
 			if (normalsPresent && texcoordsPresent) break;
 
@@ -299,7 +299,7 @@ namespace DAE_READER
 		elementCount += n != -1 ? 1 : 0;
 		elementCount += t != -1 ? 1 : 0;
 
-		for (int i = 0, j = 0; i < triangles.size(); i += elementCount, j++)
+		for (uint32_t i = 0, j = 0; i < triangles.size(); i += elementCount, j++)
 		{
 			int vSrc = i + v;
 			int trv = triangles[vSrc];
@@ -342,10 +342,10 @@ namespace DAE_READER
 		for (int i = 0; i < geometryID; i++)
 		{
 			vector<vector<draw_range_t>>& meshes = reader->geometry[i].meshes;
-			for (int j = 0; j < meshes.size(); j++)
+			for (uint32_t j = 0; j < meshes.size(); j++)
 			{
 				vector<draw_range_t>& ranges = meshes[j];
-				for (int k = 0; k < ranges.size(); k++)
+				for (uint32_t k = 0; k < ranges.size(); k++)
 				{
 					baseOffset += ranges[k].count;
 				}
@@ -359,7 +359,7 @@ namespace DAE_READER
 	{
 		int totalTrianglesSize = 0;
 
-		for (int meshes = 0; meshes < geometry->triangles.size(); meshes++)
+		for (uint32_t meshes = 0; meshes < geometry->triangles.size(); meshes++)
 		{
 			totalTrianglesSize += geometry->triangles[meshes].size();
 		}
@@ -373,21 +373,21 @@ namespace DAE_READER
 		elements_t elements = getElementOffsets(geometry);
 		int drawRangeOffset = getBaseOffset(reader, geometryID);
 
-		for (int meshes = 0; meshes < geometry->triangles.size(); meshes++)
+		for (uint32_t meshes = 0; meshes < geometry->triangles.size(); meshes++)
 		{
 			vector<int>& triangles = geometry->triangles[meshes];
 			int offset = triangles.size() / elements.elementsCount;
-			draw_range_t range{ drawRangeOffset, triangles.size() / elements.elementsCount };
+			draw_range_t range{ drawRangeOffset, (int)triangles.size() / elements.elementsCount };
 			drawRange.push_back(range);
 		}
 	}
 
-	int compareVertices(vector<float>& buf, int value0, int value1, int elementSize)
+	int compareVertices(vector<float>& buf, int value0, int value1, uint32_t elementSize)
 	{
 		int v0 = elementSize * value0;
 		int v1 = elementSize * value1;
 
-		for (int n = 0; n < elementSize; n++)
+		for (uint32_t n = 0; n < elementSize; n++)
 		{
 			if (buf[v0 + n] != buf[v1 + n])
 				return 1;
@@ -396,7 +396,7 @@ namespace DAE_READER
 		return 0;
 	}
 
-	void fillIndices(dae_reader_t *reader, int geometryID, vector<float>& rawData)
+	void fillIndices(dae_reader_t *reader, uint32_t geometryID, vector<float>& rawData)
 	{
 		geometry_t *geometry = &reader->geometry[geometryID];
 		elements_t elements = getElementOffsets(geometry);
@@ -409,7 +409,7 @@ namespace DAE_READER
 
 		int baseIdx = 0;
 
-		for (int i = 0; i < geometryID; i++)
+		for (uint32_t i = 0; i < geometryID; i++)
 		{
 			baseIdx += reader->geometry[i].maxIndex;
 		}
@@ -423,7 +423,7 @@ namespace DAE_READER
 			indices[i] = idx;
 			addVertex(rawData, geometry->bufferData, i*elementSize, elementSize);
 
-			for (int j = i + 1; j < indices.size(); j++)
+			for (uint32_t j = i + 1; j < indices.size(); j++)
 			{
 				if (!compareVertices(rawData, i, j, elementSize))
 				{
@@ -445,7 +445,7 @@ namespace DAE_READER
 		vector<float> rawData;
 		rawData.reserve(arrayBufferSize);
 
-		for (int meshes = 0; meshes < geometry->triangles.size(); meshes++)
+		for (uint32_t meshes = 0; meshes < geometry->triangles.size(); meshes++)
 		{
 			fillTempBuffer(reader, geometry, meshes, rawData);
 		}
