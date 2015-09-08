@@ -70,6 +70,12 @@ namespace DAE_READER
 	{
 		dae_reader_t *reader = init();
 		MSXML2::IXMLDOMDocument2Ptr xmlDoc = setupXMLParser(path);
+		if (!xmlDoc)
+		{
+			printf("Cannot open model file %s\n", path);
+			return NULL;
+		}
+
 		getAxisOrientation(reader, xmlDoc);
 		readGeometry(reader, xmlDoc);
 
